@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weatherdata>
+	<location>
+		<name>San Francisco</name>
+		<country>US</country>
+	</location>
+	<forecast>
+		<time from="2015-08-22T18:00:00" to="2015-08-22T18:00:00">
+			<precipitation>None</precipitation>
+			<windSpeed>
+				<unit>mps</unit>
+				<measure>4.6</measure>
+				<description>Light Breeze</description>
+			</windSpeed>
+			<temprature unit="celsius">20</temprature>
+			<clouds>Clear Sky</clouds>
+		</time>
+		<time from="2015-08-22T21:00:00" to="2015-08-23T00:00:00">
+			<precipitation>Drizzle</precipitation>
+			<windSpeed>
+				<unit>mps</unit>
+				<measure>6.2</measure>
+				<description>Gusty</description>
+			</windSpeed>
+			<temprature unit="celsius">18</temprature>
+			<clouds>Cloudy</clouds>
+		</time>
+	</forecast>
+</weatherdata>
