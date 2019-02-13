@@ -122,4 +122,36 @@ mes#getItemsResponse: {
         </dw:transform-message>
         <logger level="INFO" doc:name="Logger"/>
     </flow>
+    <flow name="dataweave-2-201Flow2">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/dw3" doc:name="HTTP"/>
+        <set-payload value="[
+{
+	&quot;Date&quot;: &quot;2007-11-6&quot;,
+	&quot;Sunshine&quot;: &quot;8.2&quot;,
+	&quot;MaxWindSpeed&quot;: 44
+},
+{
+	&quot;Date&quot;: &quot;2007-11-7&quot;,
+	&quot;Sunshine&quot;: &quot;8.4&quot;,
+	&quot;MaxWindSpeed&quot;: 43
+},
+{
+	&quot;Date&quot;: &quot;2007-11-8&quot;,
+	&quot;Sunshine&quot;: &quot;4.6&quot;,
+	&quot;MaxWindSpeed&quot;: 41
+}
+]" encoding="UTF-8" mimeType="application/json" doc:name="Set Payload"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+---
+{
+	weather: {
+		city: "SFO",
+		forecast: 	payload[0]
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
 </mule>
