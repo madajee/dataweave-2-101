@@ -154,4 +154,151 @@ mes#getItemsResponse: {
         </dw:transform-message>
         <logger message="#[payload]" level="INFO" doc:name="Logger"/>
     </flow>
+    <flow name="dataweave-2-201Flow3">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/dw4" doc:name="HTTP"/>
+        <set-payload value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;weatherdata&gt;
+	&lt;location&gt;
+		&lt;name&gt;San Francisco&lt;/name&gt;
+		&lt;country&gt;US&lt;/country&gt;
+	&lt;/location&gt;
+	&lt;forecast&gt;
+		&lt;time from=&quot;2015-08-22T18:00:00&quot; to=&quot;2015-08-22T18:00:00&quot;&gt;
+			&lt;precipitation&gt;None&lt;/precipitation&gt;
+			&lt;windSpeed&gt;
+				&lt;unit&gt;mps&lt;/unit&gt;
+				&lt;measure&gt;4.6&lt;/measure&gt;
+				&lt;description&gt;Light Breeze&lt;/description&gt;
+			&lt;/windSpeed&gt;
+			&lt;temprature unit=&quot;celsius&quot;&gt;20&lt;/temprature&gt;
+			&lt;clouds&gt;Clear Sky&lt;/clouds&gt;
+		&lt;/time&gt;
+		&lt;time from=&quot;2015-08-22T21:00:00&quot; to=&quot;2015-08-23T00:00:00&quot;&gt;
+			&lt;precipitation&gt;Drizzle&lt;/precipitation&gt;
+			&lt;windSpeed&gt;
+				&lt;unit&gt;mps&lt;/unit&gt;
+				&lt;measure&gt;6.2&lt;/measure&gt;
+				&lt;description&gt;Gusty&lt;/description&gt;
+			&lt;/windSpeed&gt;
+			&lt;temprature unit=&quot;celsius&quot;&gt;18&lt;/temprature&gt;
+			&lt;clouds&gt;Cloudy&lt;/clouds&gt;
+		&lt;/time&gt;
+	&lt;/forecast&gt;
+&lt;/weatherdata&gt;" encoding="UTF-8" mimeType="application/xml" doc:name="Set Payload"/>
+        <logger message="#[payload]" level="INFO" doc:name="Seed Payload in XML"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="cae70923-20a6-4bb0-b5ac-7c283ff63547">
+            <dw:input-payload doc:sample="weatherData.xml" mimeType="application/xml"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+using (w=payload.weatherdata) {
+	weather: {
+		city: w.location.name,
+		forecasts: w.forecast.*time map {
+			hour: ($.@from as :datetime).hour,
+			wind: $.windSpeed.description,
+			temp: $.temprature ++ ' ' ++ $.temprature.@unit
+		}
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        </flow>
+    <flow name="dataweave-2-201Flow4">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/dw5" doc:name="HTTP"/>
+        <set-payload value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;weatherdata&gt;
+	&lt;location&gt;
+		&lt;name&gt;San Francisco&lt;/name&gt;
+		&lt;country&gt;US&lt;/country&gt;
+	&lt;/location&gt;
+	&lt;forecast&gt;
+		&lt;time from=&quot;2015-08-22T18:00:00&quot; to=&quot;2015-08-22T18:00:00&quot;&gt;
+			&lt;precipitation&gt;None&lt;/precipitation&gt;
+			&lt;windSpeed&gt;
+				&lt;unit&gt;mps&lt;/unit&gt;
+				&lt;measure&gt;4.6&lt;/measure&gt;
+				&lt;description&gt;Light Breeze&lt;/description&gt;
+			&lt;/windSpeed&gt;
+			&lt;temprature unit=&quot;celsius&quot;&gt;20&lt;/temprature&gt;
+			&lt;clouds&gt;Clear Sky&lt;/clouds&gt;
+		&lt;/time&gt;
+		&lt;time from=&quot;2015-08-22T21:00:00&quot; to=&quot;2015-08-23T00:00:00&quot;&gt;
+			&lt;precipitation&gt;Drizzle&lt;/precipitation&gt;
+			&lt;windSpeed&gt;
+				&lt;unit&gt;mps&lt;/unit&gt;
+				&lt;measure&gt;6.2&lt;/measure&gt;
+				&lt;description&gt;Gusty&lt;/description&gt;
+			&lt;/windSpeed&gt;
+			&lt;temprature unit=&quot;celsius&quot;&gt;18&lt;/temprature&gt;
+			&lt;clouds&gt;Cloudy&lt;/clouds&gt;
+		&lt;/time&gt;
+	&lt;/forecast&gt;
+&lt;/weatherdata&gt;" encoding="UTF-8" mimeType="application/xml" doc:name="Set Payload"/>
+        <logger message="#[payload]" level="INFO" doc:name="Seed Payload in XML"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="cae70923-20a6-4bb0-b5ac-7c283ff63547">
+            <dw:input-payload doc:sample="weatherData.xml" mimeType="application/xml"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+using (w=payload.weatherdata) {
+	weather: {
+		city: w.location.name,
+		forecasts: w.forecast.*time map {
+			hour: ($.@from as :datetime).hour,
+			wind: $.windSpeed.description,
+			temp: $.temprature ++ ' ' ++ $.temprature.@unit
+		} filter $.hour > 18
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        </flow>
+    <flow name="dataweave-2-201Flow5">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/dw6" doc:name="HTTP"/>
+        <set-payload value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;weatherdata&gt;
+	&lt;location&gt;
+		&lt;name&gt;San Francisco&lt;/name&gt;
+		&lt;country&gt;US&lt;/country&gt;
+	&lt;/location&gt;
+	&lt;forecast&gt;
+		&lt;time from=&quot;2015-08-22T18:00:00&quot; to=&quot;2015-08-22T18:00:00&quot;&gt;
+			&lt;precipitation&gt;None&lt;/precipitation&gt;
+			&lt;windSpeed&gt;
+				&lt;unit&gt;mps&lt;/unit&gt;
+				&lt;measure&gt;4.6&lt;/measure&gt;
+				&lt;description&gt;Light Breeze&lt;/description&gt;
+			&lt;/windSpeed&gt;
+			&lt;temprature unit=&quot;celsius&quot;&gt;20&lt;/temprature&gt;
+			&lt;clouds&gt;Clear Sky&lt;/clouds&gt;
+		&lt;/time&gt;
+		&lt;time from=&quot;2015-08-22T21:00:00&quot; to=&quot;2015-08-23T00:00:00&quot;&gt;
+			&lt;precipitation&gt;Drizzle&lt;/precipitation&gt;
+			&lt;windSpeed&gt;
+				&lt;unit&gt;mps&lt;/unit&gt;
+				&lt;measure&gt;6.2&lt;/measure&gt;
+				&lt;description&gt;Gusty&lt;/description&gt;
+			&lt;/windSpeed&gt;
+			&lt;temprature unit=&quot;celsius&quot;&gt;18&lt;/temprature&gt;
+			&lt;clouds&gt;Cloudy&lt;/clouds&gt;
+		&lt;/time&gt;
+	&lt;/forecast&gt;
+&lt;/weatherdata&gt;" encoding="UTF-8" mimeType="application/xml" doc:name="Set Payload"/>
+        <logger message="#[payload]" level="INFO" doc:name="Seed Payload in XML"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="cae70923-20a6-4bb0-b5ac-7c283ff63547">
+            <dw:input-payload doc:sample="weatherData.xml" mimeType="application/xml"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+using (w=payload.weatherdata) {
+	weather: {
+		city: w.location.name,
+		forecasts: w.forecast.*time map {
+			hour: ($.@from as :datetime).hour,
+			(wind: $.windSpeed.description) when $.windSpeed.measure > 5,
+			temp: $.temprature ++ ' ' ++ $.temprature.@unit
+		}
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        </flow>
 </mule>
