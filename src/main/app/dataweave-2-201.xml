@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
@@ -54,5 +54,72 @@ payload]]></dw:set-payload>
 payload]]></dw:set-payload>
         </dw:transform-message>
         <logger message="#[payload]" level="INFO" doc:name="Transform Payload in JSON"/>
+    </flow>
+    <flow name="dataweave-2-201Flow1">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/dw2" doc:name="HTTP"/>
+        <set-payload value="[
+{
+	&quot;item_id&quot;: &quot;B00014WW38&quot;,
+	&quot;item_type&quot;: &quot;Chemical Hair Dyes&quot;,
+	&quot;item_type_name&quot;: &quot;Naturtint - Permanent Hair Colorant&quot;,
+	&quot;item_name&quot;: &quot;Permanent&quot;,
+	&quot;item_summary&quot;: &quot;Naturtint 1n Black Ebony Hair Color (1xKit)&quot;,
+	&quot;item_brand&quot;: &quot;Naturtint&quot;,
+	&quot;image_type_name&quot;: &quot;SmallImage&quot;,
+	&quot;url&quot;: &quot;http://x/y/z/small&quot;
+},
+{
+	&quot;item_id&quot;: &quot;B00014WW38&quot;,
+	&quot;item_type&quot;: &quot;Chemical Hair Dyes&quot;,
+	&quot;item_type_name&quot;: &quot;Naturtint - Permanent Hair Colorant&quot;,
+	&quot;item_name&quot;: &quot;Permanent&quot;,
+	&quot;item_summary&quot;: &quot;Naturtint 1n Black Ebony Hair Color (1xKit)&quot;,
+	&quot;item_brand&quot;: &quot;Naturtint&quot;,
+	&quot;image_type_name&quot;: &quot;LargeImage&quot;,
+	&quot;url&quot;: &quot;http://x/y/z/large&quot;
+},
+{
+	&quot;item_id&quot;: &quot;B0000YUWXG&quot;,
+	&quot;item_type&quot;: &quot;Chemical Hair Dyes&quot;,
+	&quot;item_type_name&quot;: &quot;Jerome Russells Hair Color Thickener for Thinning Hair&quot;,
+	&quot;item_name&quot;: &quot;Jeromes Thinning  Hair&quot;,
+	&quot;item_summary&quot;: &quot;Effectively cover up light  to medium bald spots&quot;,
+	&quot;item_brand&quot;: &quot;Jerome Russell&quot;,
+	&quot;image_type_name&quot;: &quot;LargeImage&quot;,
+	&quot;url&quot;: &quot;http://a/b/c&quot;
+}
+]" mimeType="application/json" doc:name="Set Payload"/>
+        <logger message="#[payload]" level="INFO" doc:name="Seed Payload in Java"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="b4670aa0-3c7e-4ec8-bc75-f3ea26db65fd">
+            <dw:input-payload doc:sample="itemsData.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%namespace mes http://www.alainn.com/SOA/message/1.0
+%namespace mod http://www.alainn.com/SOA/model/1.0
+
+%output application/xml
+---
+mes#getItemsResponse: {
+	mes#PageInfo: {
+    pageIndex: 1,
+    pageSize: sizeOf payload
+  },
+  (payload groupBy $.item_id map {
+  	mod#Item: {
+  		id: $[0].item_id,
+  		type: $[0].item_type_name,
+  		name: $[0].item_name,
+  		summary: $[0].item_summary,
+  		brand: $[0].item_brand,
+  		images: {
+  			($ map {
+  				image: $.url
+  			})
+  			}
+  		}
+  	} 		  	
+  )
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
